@@ -6,15 +6,15 @@ html {
   position: absolute;
   width: 100%;
   text-align: center;
-  font-size: 30px;
+  font-size: 40px;
 }
 
 .container {
   position: absolute;
-  width: 60%;
+  width: 80%;
   height: 60%;
   top: 20%;
-  left: 20%;
+  left: 10%;
   min-height: 400px;
 }
 
@@ -25,11 +25,11 @@ iframe {
 
 .overlay {
   position: absolute;
-  width: calc(60% - 6px);
+  width: calc(80% - 6px);
   height: calc(60% - 30px);
   min-height: 370px;
   top: 20%;
-  left: 20%;
+  left: 10%;
   background-color: white;
   color: black;
   font-size: 180px;
