@@ -85,7 +85,7 @@
       function presentVideoAtIndex(i) {
         if (i >= items.length) {
           $('.share').fadeIn(400);
-          var html = score + '/' + index + '<br><br>';
+          var html = 'You got:<br>' + score + '/' + index + '<br><br>';
           html += '<a href="https://twitter.com/share" class="twitter-share-button" data-text="I got a ' + score + '/' + index + ' on The Pronunciation Game! Think you can beat it?" data-via="AlexEKoren" data-size="large" data-count="none">Tweet</a>';
           $('.share-overlay').html(html);
           twitter();
