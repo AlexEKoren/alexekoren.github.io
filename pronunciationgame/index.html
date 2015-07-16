@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Pronunciation Test</title>
+    <link rel="stylesheet" href="style.css"/>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+    <link rel="canonical" href="https://dev.twitter.com/web/tweet-button">
+  </head>
+
+  <body>
+
+    <div class="score">
+      The Pronunciation Game!
+      <br>
+      0/0
+    </div>
+
+    <div class="container"></div>
+
+    <div class="overlay">?</div>
+
+    <div class="yay">
+      Yay!
+    </div>
+
+    <div class="answer"></div>
+
+    <div class="share">
+      <div class="share-overlay">
+        The Pronunciation Game
+        <a href="https://twitter.com/share" class="twitter-share-button" data-text="I got a ... on The Pronunciation Game! Think you can beat it?" data-via="AlexEKoren" data-size="large" data-count="none">Tweet</a>
+      </div>
+    </div>
+
+    <script>function twitter() {!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+    }
+    </script>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script>
+      var items;
+      var score;
+      var index;
+
+      function removeAccents(s) {
+        var r = s.toLowerCase();
+        r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
+        r = r.replace(new RegExp("æ", 'g'),"ae");
+        r = r.replace(new RegExp("ç", 'g'),"c");
+        r = r.replace(new RegExp("[èéêë]", 'g'),"e");
+        r = r.replace(new RegExp("[ìíîï]", 'g'),"i");
+        r = r.replace(new RegExp("ñ", 'g'),"n");                            
+        r = r.replace(new RegExp("[òóôõö]", 'g'),"o");
+        r = r.replace(new RegExp("œ", 'g'),"oe");
+        r = r.replace(new RegExp("[ùúûüū]", 'g'),"u");
+        r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
+        return r;
+      };
+
+      $.getJSON("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=UUqDSLtXeZsGc3dtVb5MW13g&key=AIzaSyAtScqqQ9WJyc1YKd24cPAfqGti1wLd4yg&maxResults=10", function(data) {
+        console.log(data);
+        index = 0;
+        score = 0;
+        items = []
+        for (var key in data.items) {
+          if (!data.items.hasOwnProperty(key)) {
+            continue;
+          }
+          var item = data.items[key];
+          var videoId, word;
+          videoId = item.snippet.resourceId.videoId;
+          var string = 'This video shows you how to pronounce';
+          var i = item.snippet.description.indexOf('This video shows you how to pronounce') + string.length + 1;
+          word = '';
+          for (; item.snippet.description.charAt(i) != '.'; i++) {
+            word += item.snippet.description.charAt(i);
+          }
+          word = removeAccents(word).replace(/[^\w\s]/gi, '');
+          items.push([videoId, word]);
+        }
+        presentVideoAtIndex(0);
+      });
+
+      function presentVideoAtIndex(i) {
+        if (i >= items.length) {
+          $('.share').fadeIn(400);
+          var html = score + '/' + index + '<br><br>';
+          html += '<a href="https://twitter.com/share" class="twitter-share-button" data-text="I got a ' + score + '/' + index + ' on The Pronunciation Game! Think you can beat it?" data-via="AlexEKoren" data-size="large" data-count="none">Tweet</a>';
+          $('.share-overlay').html(html);
+          twitter();
+          return;
+        }
+        var videoId = items[i][0];
+        var word = items[i][1];
+        var html = '<iframe id="video" width="100%" height="100%" src="https://www.youtube.com/embed/' + videoId + '?autoplay=1" frameborder="0" allowfullscreen></iframe><input type="text" id="guess-input" placeholder="What is..."/><div class="dont-know">I don\'t know.</div>'
+        $(".container").html(html);
+
+        $('#guess-input').select();
+
+        $('#guess-input').on('input',function(e){
+          console.log($(this).val());
+          console.log(word);
+          if ($(this).val().toLowerCase() == word) {
+            $(this).val("");
+            score += 1;
+            index += 1;
+            $(".score").html("The Pronunciation Game<br>" + score + "/" + index);
+            presentVideoAtIndex(index);
+            $('.yay').fadeIn(400).delay(3000).fadeOut(400);
+          }
+        });
+
+        $('.dont-know').click(function() {
+          $('.container').html("");
+          $('.answer').html('It was: ' + word);
+          $('.answer').fadeIn(400).delay(3000).fadeOut(400);
+          score += 0;
+          index += 1;
+          $(".score").html("The Pronunciation Game<br>" + score + "/" + index);
+          presentVideoAtIndex(index);
+        });
+      }
+
+    </script>
+  </body>
+
+</html>
