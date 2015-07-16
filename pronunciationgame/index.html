@@ -18,7 +18,7 @@
 
     <div class="container"></div>
 
-    <div class="overlay">?</div>
+    <div class="overlay"></div>
 
     <div class="yay">
       Yay!
@@ -95,12 +95,11 @@
         var word = items[i][1];
         var html = '<iframe id="video" width="100%" height="100%" src="https://www.youtube.com/embed/' + videoId + '?autoplay=1" frameborder="0" allowfullscreen></iframe><input type="text" id="guess-input" placeholder="What is..."/><div class="dont-know">I don\'t know.</div>'
         $(".container").html(html);
+        $(".overlay").html('?<br>Level ' + (index + 1));
 
         $('#guess-input').select();
 
         $('#guess-input').on('input',function(e){
-          console.log($(this).val());
-          console.log(word);
           if ($(this).val().toLowerCase() == word) {
             $(this).val("");
             score += 1;
@@ -108,6 +107,11 @@
             $(".score").html("The Pronunciation Game<br>" + score + "/" + index);
             presentVideoAtIndex(index);
             $('.yay').fadeIn(400).delay(3000).fadeOut(400);
+          } else {
+            $(this).css('border', function(){
+              return 'solid #f00';
+            });
+            $(this).fadeOut(20).fadeIn(20);
           }
         });
 
