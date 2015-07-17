@@ -25,6 +25,10 @@
       Yay!
     </div>
 
+    <div class="loading">
+      Loading...
+    </div>
+
     <div class="answer"></div>
 
     <div class="share">
@@ -59,33 +63,52 @@
         return r;
       };
 
-      $.getJSON("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=UUqDSLtXeZsGc3dtVb5MW13g&key=AIzaSyAtScqqQ9WJyc1YKd24cPAfqGti1wLd4yg&maxResults=10", function(data) {
-        console.log(data);
-        index = 0;
-        score = 0;
-        items = []
-        for (var key in data.items) {
-          if (!data.items.hasOwnProperty(key)) {
-            continue;
-          }
-          var item = data.items[key];
-          var videoId, word;
-          videoId = item.snippet.resourceId.videoId;
-          var string = 'This video shows you how to pronounce';
-          var i = item.snippet.description.indexOf('This video shows you how to pronounce') + string.length + 1;
-          word = '';
-          for (; item.snippet.description.charAt(i) != '.'; i++) {
-            word += item.snippet.description.charAt(i);
-          }
-          word = removeAccents(word).replace(/[^\w\s]/gi, '');
-          items.push([videoId, word]);
+      var nextPageToken = "token";
+      items = [];
+      index = 0;
+      score = 0;
+      addVideosFromPage(null);
+
+      function addVideosFromPage(token) {
+        var queryString = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=UUqDSLtXeZsGc3dtVb5MW13g&key=AIzaSyAtScqqQ9WJyc1YKd24cPAfqGti1wLd4yg&maxResults=50";
+        if (token) {
+          queryString += "&pageToken=" + token;
         }
-        presentVideoAtIndex(0);
-      });
+        $.getJSON(queryString, function(data) {
+          console.log(data);
+          index = 0;
+          score = 0;
+          for (var key in data.items) {
+            if (!data.items.hasOwnProperty(key)) {
+              continue;
+            }
+            var item = data.items[key];
+            var videoId, word;
+            videoId = item.snippet.resourceId.videoId;
+            var string = 'This video shows you how to pronounce';
+            var i = item.snippet.description.indexOf('This video shows you how to pronounce') + string.length + 1;
+            word = '';
+            for (; item.snippet.description.charAt(i) != '.' && i < item.snippet.description.length; i++) {
+              word += item.snippet.description.charAt(i);
+            }
+
+            word = removeAccents(word).replace(/[^\w\s]/gi, '');
+            items.push([videoId, word]);
+          }
+          if (!data.nextPageToken) {
+            items.sort( function() { return 0.5 - Math.random() } );
+            items = items.slice(0, 10);
+            presentVideoAtIndex(index);
+            $(".loading").fadeOut(400);
+          } else {
+            addVideosFromPage(data.nextPageToken);
+          }
+        });
+      }
 
       function presentVideoAtIndex(i) {
         if (i >= items.length) {
-          $('.share').fadeIn(400);
+          $('.share').delay(2000).fadeIn(400);
           var html = 'You got:<br>' + score + '/' + index + '<br><br>';
           html += '<a href="https://twitter.com/share" class="twitter-share-button" data-text="I got a ' + score + '/' + index + ' on The Pronunciation Game! Think you can beat it?" data-via="AlexEKoren" data-size="large" data-count="none">Tweet</a>';
           $('.share-overlay').html(html);

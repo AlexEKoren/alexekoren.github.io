@@ -78,6 +78,19 @@ input {
   border-radius: 30px;
 }
 
+.loading {
+  position: absolute;
+  width: 20%;
+  height: 60px;
+  top: calc(50% - 30px);
+  left: 40%;
+  font-size: 50px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, .8);
+  color: white;
+  border-radius: 30px;
+}
+
 .answer {
   display: none;
   position: absolute;
