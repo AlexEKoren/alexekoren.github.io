@@ -86,7 +86,7 @@
             var videoId, word;
             videoId = item.snippet.resourceId.videoId;
             var string = 'This video shows you how to pronounce';
-            var i = item.snippet.description.indexOf('This video shows you how to pronounce') + string.length + 1;
+            var i = item.snippet.description.indexOf(string) + string.length + 1;
             word = '';
             for (; item.snippet.description.charAt(i) != '.' && i < item.snippet.description.length; i++) {
               word += item.snippet.description.charAt(i);
@@ -95,6 +95,8 @@
               continue;
             }
             finalWord = removeAccents(word).replace(/[^\w\s]/gi, '');
+            if (finalWord.length > 15)
+              continue;
             items.push([videoId, word, finalWord]);
           }
           if (!data.nextPageToken) {
