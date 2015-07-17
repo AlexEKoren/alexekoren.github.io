@@ -92,8 +92,8 @@
               word += item.snippet.description.charAt(i);
             }
 
-            word = removeAccents(word).replace(/[^\w\s]/gi, '');
-            items.push([videoId, word]);
+            finalWord = removeAccents(word).replace(/[^\w\s]/gi, '');
+            items.push([videoId, word, finalWord]);
           }
           if (!data.nextPageToken) {
             items.sort( function() { return 0.5 - Math.random() } );
@@ -117,6 +117,7 @@
         }
         var videoId = items[i][0];
         var word = items[i][1];
+        var finalWord = items[i][2];
         var html = '<iframe id="video" width="100%" height="100%" src="https://www.youtube.com/embed/' + videoId + '?autoplay=1" frameborder="0" allowfullscreen></iframe><input type="text" id="guess-input" placeholder="What is..."/><div class="dont-know">I don\'t know.</div>'
         $(".container").html(html);
         $(".overlay").html('?<br>Level ' + (index + 1));
@@ -124,7 +125,7 @@
         $('#guess-input').select();
 
         $('#guess-input').on('input',function(e){
-          if ($(this).val().toLowerCase() == word) {
+          if ($(this).val().toLowerCase() == finalWord) {
             $(this).val("");
             score += 1;
             index += 1;
