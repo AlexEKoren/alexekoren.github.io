@@ -125,7 +125,7 @@
         $('#guess-input').select();
 
         $('#guess-input').on('input',function(e){
-          if ($(this).val().toLowerCase() == finalWord) {
+          if (removeAccents($(this).val()).replace(/[^\w\s]/gi, '') == finalWord) {
             $(this).val("");
             score += 1;
             index += 1;
