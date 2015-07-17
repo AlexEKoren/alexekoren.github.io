@@ -91,7 +91,9 @@
             for (; item.snippet.description.charAt(i) != '.' && i < item.snippet.description.length; i++) {
               word += item.snippet.description.charAt(i);
             }
-
+            if (! /^[a-zA-Z0-9]+$/.test(word)) {
+              continue;
+            }
             finalWord = removeAccents(word).replace(/[^\w\s]/gi, '');
             items.push([videoId, word, finalWord]);
           }
